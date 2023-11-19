@@ -65,18 +65,19 @@ struct Graph {
 };
 
 ll solve() {
-    int n, m;
+    int n, m, root = 0;
     cin >> n >> m;
     Graph g(n + 1);
     for (int i = 0; i < m; i++){
         int u, v;
         cin >> u >> v;
         g.addEdge(u, v);
-        //g.dfs(v, u);
+        // for online:
+        //g.prepare(root);
     }
     int a, b;
     cin >> a >> b;
-    int root = 0;
+    // for offline
     g.prepare(root);
     cout << g.lca(a, b);
     return 0;
