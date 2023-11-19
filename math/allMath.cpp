@@ -7,80 +7,83 @@ namespace Math {
     const long long MOD = 1e9 + 7;
 
 
-    long long gcd(long long a, long long b) {
-        return b ? gcd(b, a % b) : a;
-    }
-    long long lcm(long long a, long long b) {
-        return a / gcd(a, b) * b;
-    }
-    long long gcdex(long long a, long long b, long long& x, long long& y) {
-        if (!b) {
-            x = 1;
-            y = 0;
-            return a;
+    namespace euclid {
+        long long gcd(long long a, long long b) {
+            return b ? gcd(b, a % b) : a;
         }
-        long long x1, y1, d = gcdex(b, a % b, x1, y1);
-        x = y1;
-        y = x1 - a / b * y1;
-        return d;
-    }
-    long long inv(long long a, long long mod = MOD) {
-        long long x, y;
-        return a && gcdex(a, mod, x, y) == 1 ? (x % mod + mod) % mod : 0;
-    }
-
-    // O(sqrt(N))
-    bool isPrime(int n) {
-        if (n < 2)
-            return 0;
-        for (long long d = 2; d * d <= n; d++)
-            if (n % d == 0)
+        long long lcm(long long a, long long b) {
+            return a / gcd(a, b) * b;
+        }
+        long long gcdex(long long a, long long b, long long& x, long long& y) {
+            if (!b) {
+                x = 1;
+                y = 0;
+                return a;
+            }
+            long long x1, y1, d = gcdex(b, a % b, x1, y1);
+            x = y1;
+            y = x1 - a / b * y1;
+            return d;
+        }
+        long long inv(long long a, long long mod = MOD) {
+            long long x, y;
+            return a && gcdex(a, mod, x, y) == 1 ? (x % mod + mod) % mod : 0;
+        }
+    };
+    namespace primes {
+        // O(sqrt(N))
+        bool isPrime(int n) {
+            if (n < 2)
                 return 0;
-        return 1;
-    }
+            for (long long d = 2; d * d <= n; d++)
+                if (n % d == 0)
+                    return 0;
+            return 1;
+        }
 
-    // O(sqrt(N))
-    vector<int> getPrimeDivisors(int n) {
-        vector<int> primeDivisors;
-        for (long long d = 2; d * d <= n; d++) {
-            if (n % d == 0) {
-                primeDivisors.push_back(d);
-                while (n % d == 0)
+        // O(sqrt(N))
+        vector<int> getPrimeDivisors(int n) {
+            vector<int> primeDivisors;
+            for (long long d = 2; d * d <= n; d++) {
+                if (n % d == 0) {
+                    primeDivisors.push_back(d);
+                    while (n % d == 0)
+                        n /= d;
+                }
+            }
+            if (n != 1)
+                primeDivisors.push_back(n);
+            return primeDivisors;
+        }
+
+        // O(sqrt(N))
+        vector<int> factorize(int n) {
+            vector<int> factorization;
+            for (long long d = 2; d * d <= n; d++) {
+                while (n % d == 0) {
+                    factorization.push_back(d);
                     n /= d;
+                }
             }
+            if (n != 1)
+                factorization.push_back(n);
+            return factorization;
         }
-        if (n != 1)
-            primeDivisors.push_back(n);
-        return primeDivisors;
-    }
 
-    // O(sqrt(N))
-    vector<int> factorize(int n) {
-        vector<int> factorization;
-        for (long long d = 2; d * d <= n; d++) {
-            while (n % d == 0) {
-                factorization.push_back(d);
-                n /= d;
+        // O(N)
+        vector<int> getPrimes(int n) {
+            vector<int> minDivisor(n + 1), primes;
+            for (int i = 2; i < minDivisor.size(); i++) {
+                if (!minDivisor[i]) {
+                    minDivisor[i] = i;
+                    primes.push_back(i);
+                }
+                for (int j = 0; j < primes.size() && primes[j] <= minDivisor[i] && 1LL * i * primes[j] < minDivisor.size(); j++)
+                    minDivisor[i * primes[j]] = primes[j];
             }
+            return primes;
         }
-        if (n != 1)
-            factorization.push_back(n);
-        return factorization;
-    }
-
-    // O(N)
-    vector<int> getPrimes(int n) {
-        vector<int> minDivisor(n + 1), primes;
-        for (int i = 2; i < minDivisor.size(); i++) {
-            if (!minDivisor[i]) {
-                minDivisor[i] = i;
-                primes.push_back(i);
-            }
-            for (int j = 0; j < primes.size() && primes[j] <= minDivisor[i] && 1LL * i * primes[j] < minDivisor.size(); j++)
-                minDivisor[i * primes[j]] = primes[j];
-        }
-        return primes;
-    }
+    };
 
     long long binPow(long long x, long long p, long long mod = MOD) {
         if (!p)
