@@ -4,6 +4,7 @@ using namespace std;
 typedef long long ll;
 
 class Graph {
+private:
     struct Edge {
         int a, b, capacity, flow = 0, cost;
 
@@ -30,7 +31,7 @@ class Graph {
     vector<Edge> edges;
     vector<int> distTo;
     vector<int> edgeTo;
-    static const int INF = 1e9;
+    /* static */const int INF = 1e9;
 
     void fordBellman(int start) {
         fill(distTo.begin(), distTo.end(), INF);
@@ -79,7 +80,7 @@ class Graph {
 public:
     Graph(int vertexCount) :
         distTo(vertexCount), edgeTo(vertexCount) {}
-    
+
     void addEdge(int from, int to, int capacity, int cost) {
         edges.push_back(Edge(from, to, capacity, cost));
     }
@@ -96,16 +97,27 @@ public:
 };
 
 ll solve() {
-
+    int n, m;
+    cin >> n >> m;
+    int s = 1, t = n;
+    Graph g(n + 1);
+    for (int i = 0; i < m; i++){
+         int u, v, cap, cost;
+         cin >> u >> v >> cap >> cost;
+         g.addEdge(u, v, cap, cost);
+         g.addEdge(v, u, cap, cost);
+     }
+     pair<ll,ll> ans = g.minCostMaxFlow(s, t);
+     cout << ans.second << " " << ans.first << endl;
     return 0;
 }
 
 int main() {
     IOS;
-	ll tc = 1;
-	//cin >> tc;
-	while (tc--) {
-		solve();
-	}
-	return 0;
+    ll tc = 1;
+    //cin >> tc;
+    while (tc--) {
+        solve();
+    }
+    return 0;
 }
