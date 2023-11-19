@@ -2,6 +2,7 @@
 #define IOS ios::sync_with_stdio(false); cin.tie(nullptr)
 using namespace std;
 typedef long long ll;
+const long long MOD = 1e9 + 7;
 
 long long binPow(long long x, long long p, long long mod = MOD) {
     if (!p)
