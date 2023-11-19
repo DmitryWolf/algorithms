@@ -42,8 +42,8 @@ namespace Math {
         }
 
         // O(sqrt(N))
-        vector<int> getPrimeDivisors(int n) {
-            vector<int> primeDivisors;
+        vector<long long> getPrimeDivisors(long long n) {
+            vector<long long> primeDivisors;
             for (long long d = 2; d * d <= n; d++) {
                 if (n % d == 0) {
                     primeDivisors.push_back(d);
@@ -57,8 +57,8 @@ namespace Math {
         }
 
         // O(sqrt(N))
-        vector<int> factorize(int n) {
-            vector<int> factorization;
+        vector<long long> factorize(long long n) {
+            vector<long long> factorization;
             for (long long d = 2; d * d <= n; d++) {
                 while (n % d == 0) {
                     factorization.push_back(d);
