@@ -28,33 +28,6 @@ namespace Math {
         long long x, y;
         return a && gcdex(a, mod, x, y) == 1 ? (x % mod + mod) % mod : 0;
     }
-    namespace combinatorics{
-        vector<long long> precalcFactorials() {
-            vector<long long> memo(1e5);
-            memo[0] = 1;
-            for (int i = 1; i < memo.size(); i++)
-                memo[i] = memo[i - 1] * i % MOD;
-            return memo;
-        }
-        long long factorial(int n) {
-            static vector<long long> memo = precalcFactorials();
-            return memo[n];
-        }
-        long long invBP(long long x) {
-            return binPow(x, MOD - 2, MOD);
-        }
-        long long c(int n, int k) {
-            return factorial(n) * invBP(factorial(k)) % MOD * invBP(factorial(n - k)) % MOD;
-        }
-    };
-
-
-
-
-
-
-
-    
 
     // O(sqrt(N))
     bool isPrime(int n) {
@@ -134,6 +107,29 @@ namespace Math {
             res -= res / n;
         return res;
     }
+
+
+    namespace combinatorics {
+        vector<long long> precalcFactorials() {
+            vector<long long> memo(1e5);
+            memo[0] = 1;
+            for (int i = 1; i < memo.size(); i++)
+                memo[i] = memo[i - 1] * i % MOD;
+            return memo;
+        }
+        long long factorial(int n) {
+            static vector<long long> memo = precalcFactorials();
+            return memo[n];
+        }
+        long long invBP(long long x) {
+            return binPow(x, MOD - 2, MOD);
+        }
+        long long c(int n, int k) {
+            return factorial(n) * invBP(factorial(k)) % MOD * invBP(factorial(n - k)) % MOD;
+        }
+    };
+
+
 
     namespace matrix {
         using Matrix = vector<vector<long long>>;
