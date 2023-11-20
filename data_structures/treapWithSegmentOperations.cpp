@@ -5,6 +5,11 @@ using namespace std;
 typedef long long ll;
 
 
+int calcGcd(int a, int b) {
+    return b ? calcGcd(b, a % b) : a;
+}
+
+
 class Treap {
     static minstd_rand generator;
 
@@ -12,19 +17,24 @@ class Treap {
         int key, priority;
         int size;
         ll sum;
+        int gcd;
         Node* l = nullptr, * r = nullptr;
-        Node(int key) : key(key), priority(generator()), size(1), sum(key) {}
+        Node(int key) : key(key), priority(generator()), size(1), sum(key), gcd(key) {}
     } *root = nullptr;
     static int getSize(Node* n) {
         return n ? n->size : 0;
     }
-    static int getSum(Node* n) {
+    static ll getSum(Node* n) {
         return n ? n->sum : 0;
+    }
+    static int getGcd(Node* n) {
+        return n ? n->gcd : 0;
     }
     static void update(Node*& n) {
         if (n) {
             n->size = getSize(n->l) + 1 + getSize(n->r);
             n->sum = getSum(n->l) + n->key + getSum(n->r);
+            n->gcd = calcGcd(calcGcd(getGcd(n->l), n->key), getGcd(n->r));
         }
     }
     static Node *merge(Node* a, Node* b) {
@@ -129,6 +139,7 @@ public:
         Node* less, * equal, * greater;
         split(root, key, less, greater);
         split(greater, key + 1, equal, greater);
+        //если надо удалить один ключ, а не все ключи равные key
         //equal = merge(equal->l, equal->r);
         root = merge(less, greater);
     }
@@ -168,6 +179,17 @@ public:
         return res;
     }
 
+    int gcd() {
+        return getGcd(root);
+    }
+    int gcd(int l, int r) {
+        Node *less, *equal, *greater;
+        split(root, l, less, greater);
+        split(greater, r + 1, equal, greater);
+        int res = getGcd(equal);
+        root = merge(merge(less, equal), greater);
+        return res;
+    }
 
 };
 
@@ -190,7 +212,7 @@ ll solve() {
     // 14 23 46 55 67
     
     {
-        // Test 1
+        // Test 1: indexByKey
         cout << t.indexByKey(14) << "\n";
         cout << t.indexByKey(23) << "\n";
         cout << t.indexByKey(46) << "\n";
@@ -204,7 +226,7 @@ ll solve() {
         assert(t.indexByKey(67) == 4);
     }
     {
-        // Test 2
+        // Test 2: keyByIndex
         cout << t.keyByIndex(0) << "\n";
         cout << t.keyByIndex(1) << "\n";
         cout << t.keyByIndex(2) << "\n";
@@ -218,7 +240,7 @@ ll solve() {
         assert(t.keyByIndex(4) == 67);
     }
     {
-        // Test 3
+        // Test 3: segment sum
         t.insert(5);
         t.insert(9);
         t.insert(7);
@@ -230,7 +252,20 @@ ll solve() {
         assert(t.sum(5, 10) == 14);
         t.insert(12);
         cout << t.sum(5, 15) << "\n";
+        cout << "\n\n\n";
         assert(t.sum(5, 15) == 40);
+    }
+    {
+        // Test 4: segment gcd
+        cout << t.gcd() << "\n";
+        assert(t.gcd() == 1);
+        t.insert(4);
+        cout << t.gcd(2, 4) << "\n";
+        assert(t.gcd(2, 4) == 2);
+        t.insert(6);
+        t.insert(9);
+        cout << t.gcd(6, 9) << "\n";
+        assert(t.gcd(6, 9) == 3);
     }
     return 0;
 }
