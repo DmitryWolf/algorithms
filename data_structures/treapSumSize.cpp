@@ -11,16 +11,20 @@ class Treap {
     struct Node {
         int key, priority;
         int size;
+        ll sum;
         Node* l = nullptr, * r = nullptr;
-        Node(int key) : key(key), priority(generator()), size(1) {}
+        Node(int key) : key(key), priority(generator()), size(1), sum(key) {}
     } *root = nullptr;
     static int getSize(Node* n) {
         return n ? n->size : 0;
     }
-
+    static int getSum(Node* n) {
+        return n ? n->sum : 0;
+    }
     static void update(Node*& n) {
         if (n) {
             n->size = getSize(n->l) + 1 + getSize(n->r);
+            n->sum = getSum(n->l) + n->key + getSum(n->r);
         }
     }
     static Node *merge(Node* a, Node* b) {
@@ -151,9 +155,29 @@ public:
     int size() {
         return getSize(root);
     }
+
+    ll sum(int l, int r) {
+        Node* less, *equal, *greater;
+        split(root, l, less, greater);
+        split(greater, r + 1, equal, greater);
+        // в less попадут все, которые меньше l
+        // в greater попадут все, которые больше r
+        // в equal сумма нужных
+        ll res = getSum(equal);
+        root = merge(merge(less, equal), greater);
+        return res;
+    }
+
+
 };
 
 minstd_rand Treap::generator;
+
+
+
+
+
+
 
 
 ll solve() {
@@ -163,20 +187,51 @@ ll solve() {
     t.insert(14);
     t.insert(67);
     t.insert(46);
-    
     // 14 23 46 55 67
-
-    cout << t.indexByKey(14) << "\n";
-    cout << t.indexByKey(23) << "\n";
-    cout << t.indexByKey(46) << "\n";
-    cout << t.indexByKey(55) << "\n";
-    cout << t.indexByKey(67) << "\n";
-    cout << "\n\n\n";
-    cout << t.keyByIndex(0) << "\n";
-    cout << t.keyByIndex(1) << "\n";
-    cout << t.keyByIndex(2) << "\n";
-    cout << t.keyByIndex(3) << "\n";
-    cout << t.keyByIndex(4) << "\n";
+    
+    {
+        // Test 1
+        cout << t.indexByKey(14) << "\n";
+        cout << t.indexByKey(23) << "\n";
+        cout << t.indexByKey(46) << "\n";
+        cout << t.indexByKey(55) << "\n";
+        cout << t.indexByKey(67) << "\n";
+        cout << "\n\n\n";
+        assert(t.indexByKey(14) == 0);
+        assert(t.indexByKey(23) == 1);
+        assert(t.indexByKey(46) == 2);
+        assert(t.indexByKey(55) == 3);
+        assert(t.indexByKey(67) == 4);
+    }
+    {
+        // Test 2
+        cout << t.keyByIndex(0) << "\n";
+        cout << t.keyByIndex(1) << "\n";
+        cout << t.keyByIndex(2) << "\n";
+        cout << t.keyByIndex(3) << "\n";
+        cout << t.keyByIndex(4) << "\n";
+        cout << "\n\n\n";
+        assert(t.keyByIndex(0) == 14);
+        assert(t.keyByIndex(1) == 23);
+        assert(t.keyByIndex(2) == 46);
+        assert(t.keyByIndex(3) == 55);
+        assert(t.keyByIndex(4) == 67);
+    }
+    {
+        // Test 3
+        t.insert(5);
+        t.insert(9);
+        t.insert(7);
+        t.insert(2);
+        cout << t.sum(5, 10) << "\n";
+        assert(t.sum(5, 10) == 21);
+        t.erase(7);
+        cout << t.sum(5, 10) << "\n";
+        assert(t.sum(5, 10) == 14);
+        t.insert(12);
+        cout << t.sum(5, 15) << "\n";
+        assert(t.sum(5, 15) == 40);
+    }
     return 0;
 }
 
