@@ -78,7 +78,7 @@
 ```
 c[k] = for i + j == k: Sum(a[i]b[j])
 ```
-$$\c[k] = sum_{i + j = k} a[i]b[j]$$
+$$c[k]=\sum_{i + j = k} a[i]b[j]$$
 Поскольку все элементы a[i]=0, i=n...2n-1, то мы получаем:
 ```
 c[k] = for i = 0...n-1: Sum(a[i]b[k-i])
