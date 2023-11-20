@@ -140,7 +140,10 @@ public:
         split(root, key, less, greater);
         split(greater, key + 1, equal, greater);
         //если надо удалить один ключ, а не все ключи равные key
-        //equal = merge(equal->l, equal->r);
+        // if (equal) equal = merge(equal->l, equal->r);
+        // root = merge(merge(less, equal), greater);
+
+        // иначе это
         root = merge(less, greater);
     }
     int next(int key) {
