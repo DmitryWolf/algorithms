@@ -10,20 +10,51 @@ class Treap {
     struct Node {
         int priority;
         int size;
-        ll value;
+        int value;
+        int minValue;
+        int add = 0;
+        bool rev = 0; // 1 - we need to reverse [l, r]
         Node* l = nullptr, * r = nullptr;
-        Node(int value) : priority(generator()), value(value), size(1) {}
+        Node(int value) : priority(generator()), value(value), size(1), minValue(value) {}
     } *root = nullptr;
 
     static int getSize(Node* n) {
         return n ? n->size : 0;
     }
+
+    static int getMinValue(Node* n) {
+        return n ? n->minValue + n->add : 2e9;
+    }
+    static void push(Node* n) {
+        if (n) {
+            if (n->add) {
+                n->value += n->add;
+                n->minValue += n->add;
+                if (n->l)
+                    n->l->add += n->add;
+                if (n->r)
+                    n->r->add += n->add;
+                n->add = 0;
+            }
+            if (n->rev) {
+                swap(n->l, n->r);
+                if (n->l)
+                    n->l->rev ^= 1;
+                if (n->r)
+                    n->r->rev ^= 1;
+                n->rev = 0;
+            }
+        }
+    }
     static void update(Node*& n) {
         if (n) {
             n->size = getSize(n->l) + 1 + getSize(n->r);
+            n->minValue = min(min(getMinValue(n->l), getMinValue(n->r)), n->value);
         }
     }
     static Node *merge(Node* a, Node* b) {
+        push(a);
+        push(b);
         if (!a || !b) {
             return a ? a : b;
         }
@@ -49,6 +80,7 @@ class Treap {
 
     // разделить n: первые k вершин попадут в a, остальные в b
     static void split(Node* n, int k, Node*& a, Node*& b) {
+        push(n);
         if (!n) {
             a = b = nullptr;
             return;
@@ -111,15 +143,36 @@ public:
     }
 
 
-    void moveToFront(int l, int r) {
+    void toFront(int l, int r) {
         Node* less, * equal, * greater;
         split(root, l, less, greater);
         split(greater, r - l + 1, equal, greater);
         root = merge(merge(equal, less), greater);
     }
 
+    int minValue(int l, int r) {
+        Node* less, * equal, * greater;
+        split(root, l, less, greater);
+        split(greater, r - l + 1, equal, greater);
+        int result = getMinValue(equal);
+        root = merge(merge(less, equal), greater);
+        return result;
+    }
 
-
+    void add(int l, int r, int val) {
+        Node* less, * equal, * greater;
+        split(root, l, less, greater);
+        split(greater, r - l + 1, equal, greater);
+        equal->add += val;
+        root = merge(merge(less, equal), greater);
+    }
+    void reverse(int l, int r) {
+        Node* less, * equal, * greater;
+        split(root, l, less, greater);
+        split(greater, r - l + 1, equal, greater);
+        equal->rev ^= 1;
+        root = merge(merge(less, equal), greater);
+    }
 };
 
 minstd_rand Treap::generator;
@@ -188,7 +241,7 @@ ll solve() {
     // Test 5: moveToFront
     {
         t.pushFront(6);
-        t.moveToFront(1, 2);
+        t.toFront(1, 2);
         for (int i = 0; i < t.size(); i++) {
             cout << t.get(i) << " ";
         }
