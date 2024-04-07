@@ -79,5 +79,6 @@ int main() {
 	while (tc--) {
 		solve();
 	}
+	//cout.flush();
 	return 0;
 }
