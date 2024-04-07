@@ -1,10 +1,10 @@
-#define _CRT_SECURE_NO_WARNINGS
+// #define _CRT_SECURE_NO_WARNINGS
 #include <bits/stdc++.h>
 using namespace std;
 
-#pragma GCC optimize("Ofast")
-#pragma GCC target("avx,avx2,fma")
-#pragma GCC optimization ("unroll-loops")
+// #pragma GCC optimize("Ofast")
+// #pragma GCC target("avx,avx2,fma")
+// #pragma GCC optimization ("unroll-loops")
 
 typedef long long ll;
 typedef long double ld;
@@ -51,6 +51,7 @@ void Case(ll i) { printf("Case #%lld: ", i); }
 const int inf = 1e9, mod = 1e9 + 7, N = 1e5 + 5, LG = 30;
 const ll INF = 1e18;
 const ld eps = 1e-9;
+const ll MOD = 1e9 + 7;
 
 struct pair_hash
 {
