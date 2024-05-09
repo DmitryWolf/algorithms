@@ -236,6 +236,9 @@ namespace Geometry {
     struct Polygon {
         vector<Point> points;
 
+        Polygon(const vector<Point>& vp) : points(vp){}
+        Polygon() = default;
+
         void addPoint(const Point& p) {
             points.push_back(p);
         }
@@ -276,6 +279,32 @@ namespace Geometry {
             for (int i = 0; i < points.size(); i++)
                 s += points[i].crossProduct(points[(i + 1) % points.size()]);
             return abs(s) / 2;
+        }
+        
+        Polygon convex_hull() {
+            Point p0 = points[0];
+            for (Point p : points)
+                if (p.x < p0.x || (p.x == p0.x && p.y < p0.y))
+                    p0 = p;
+            for (Point &x : points) {
+                x.x -= p0.x;
+                x.y -= p0.y;
+            }
+            sort(points.begin(), points.end(), [&](Point a, Point b){
+                return (a.crossProduct(b)) > 0 || (a.crossProduct(b)) == 0 && a.x * a.x + a.y * a.y < b.x * b.x + b.y * b.y;
+            });
+            vector<Point> hull;
+            for (Point p : points) {
+                while (hull.size() >= 2 && ((p - hull.back()).crossProduct((hull[hull.size() - 2] - hull.back()))) <= 0) {
+                    hull.pop_back();
+                }
+                hull.push_back(p);
+            }
+            for (Point &x : hull) {
+                x.x += p0.x;
+                x.y += p0.y;
+            }
+            return Polygon(hull);
         }
     };
 };
